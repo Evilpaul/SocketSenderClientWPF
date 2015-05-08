@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sequence>
+	<message name="test1">1F</message>
+	<delay>7000</delay>
+	<message name="test2">2E</message>
+	<message name="test3">3D</message>
+	<delay>1</delay>
+</sequence>

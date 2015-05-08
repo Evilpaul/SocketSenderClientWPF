@@ -1,0 +1,8 @@
+﻿<Window x:Class="SocketSenderClientWPF.Dialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dialog" Height="250" Width="400" ResizeMode="NoResize">
+    <Grid>
+        <RichTextBox x:Name="rtb" IsReadOnly="True"/>
+    </Grid>
+</Window>
