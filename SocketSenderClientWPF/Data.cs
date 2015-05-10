@@ -7,12 +7,6 @@ using System.Xml.Schema;
 
 namespace SocketSenderClientWPF
 {
-	public class MyItem
-	{
-		public string Description { get; set; }
-		public string Data { get; set; }
-	}
-
 	class Data
 	{
 		private IProgress<string> progress_str;

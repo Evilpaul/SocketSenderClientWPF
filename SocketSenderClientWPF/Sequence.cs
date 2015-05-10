@@ -14,7 +14,8 @@ namespace SocketSenderClientWPF
 		private IProgress<string> progress_str;
 		private IProgress<bool> progress_seq;
 		private Client client;
-		private bool is_file_loaded = false;
+		private bool isRunning;
+		private bool isLoaded;
 
 		private List<node> list = new List<node>();
 
@@ -23,30 +24,42 @@ namespace SocketSenderClientWPF
 			progress_str = pr_str;
 			progress_seq = pr_seq;
 			client = cl;
-			is_file_loaded = false;
+			isLoaded = false;
+			isRunning = false;
 		}
 
-		public bool isLoaded()
+		public bool IsRunning()
 		{
-			return is_file_loaded;
+			return isRunning;
+		}
+
+		private void Set_IsRunning(bool value)
+		{
+			isRunning = value;
+			progress_seq.Report(isRunning);
+		}
+
+		public bool IsLoaded()
+		{
+			return isLoaded;
 		}
 
 		public async void Run()
 		{
-			progress_seq.Report(true);
 			await do_async();
-			progress_seq.Report(false);
 		}
 
 		private Task do_async()
 		{
 			return Task.Run(() =>
 			{
-				if (!is_file_loaded)
+				if (!isLoaded)
 				{
 					progress_str.Report("ERROR: No sequence loaded!");
 					return;
 				}
+
+				Set_IsRunning(true);
 
 				foreach (node n in list)
 				{
@@ -63,6 +76,8 @@ namespace SocketSenderClientWPF
 						client.sendMessage(n.getValue());
 					}
 				}
+
+				Set_IsRunning(false);
 			});
 		}
 
@@ -109,13 +124,13 @@ namespace SocketSenderClientWPF
 				} while (reader.Read());
 
 				reader.Close();
-				is_file_loaded = true;
+				isLoaded = true;
 
 				progress_str.Report("File loaded : " + filePath);
 			}
-			catch(XmlSchemaValidationException ex)
+			catch (XmlSchemaValidationException ex)
 			{
-				is_file_loaded = false;
+				isLoaded = false;
 				progress_str.Report("Validation error: " + ex.Message);
 			}
 		}

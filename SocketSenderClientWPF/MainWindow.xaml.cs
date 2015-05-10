@@ -42,40 +42,26 @@ namespace SocketSenderClientWPF
 			{
 				ServerIpBox.IsEnabled = !status;
 				PortNoBox.IsEnabled = !status;
-				RunMenuItem.IsEnabled = status && sequence.isLoaded();
+				RunMenuItem.IsEnabled = status && sequence.IsLoaded();
 				if (!status)
 				{
 					UpdateOpenBtnStatus();
 					SendMsgButton.IsEnabled = status;
-//					socketLabel.Hide();
 				}
 				else
 				{
 					UpdateSendBtnStatus();
 					StartMenuItem.IsEnabled = !status;
-//					socketLabel.Show();
 				}
 				StopMenuItem.IsEnabled = status;
 
 				MsgBox.IsEnabled = status;
 				MessageList.IsEnabled = status;
-
-				if (!status)
-				{
-					client.closeSocket();
-				}
 			});
 
 			progress_seq = new Progress<Boolean>(status =>
 			{
-				if (!status)
-				{
-//					sequenceLabel.Hide();
-				}
-				else
-				{
-//					sequenceLabel.Show();
-				}
+				updateUI();
 			});
 
 			ServerIpBox.Text = GetIP();
@@ -89,6 +75,18 @@ namespace SocketSenderClientWPF
 			data = new Data(progress_str, ref MessageList);
 
 			data.LoadDefaults();
+		}
+
+		private void updateUI()
+		{
+			if(sequence.IsRunning())
+			{
+				StatusBar.Content = "Sequence running";
+			}
+			else
+			{
+				StatusBar.Content = "";
+			}
 		}
 
 		private string GetIP()
@@ -197,14 +195,13 @@ namespace SocketSenderClientWPF
 
 		private void StopMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			progress_str.Report("Closing Socket...");
+			client.closeSocket();
 			progress_hmi.Report(false);
 		}
 
 		private void StartMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			StartMenuItem.IsEnabled = false;
-			progress_str.Report("Opening Socket...");
 
 			// See if we have text on the IP and Port text fields
 			if (ServerIpBox.Text == "" || PortNoBox.Text == "")
@@ -246,7 +243,7 @@ namespace SocketSenderClientWPF
 			if (openDialog.ShowDialog().Value) // Test result.
 			{
 				sequence.Load(openDialog.FileName);
-				RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.isLoaded();
+				RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded();
 			}
 		}
 
@@ -263,7 +260,6 @@ namespace SocketSenderClientWPF
 			}
 			else
 			{
-				progress_str.Report("Sending Msg...");
 				client.sendMessage(MsgBox.Text);
 			}
 		}
@@ -305,6 +301,12 @@ namespace SocketSenderClientWPF
 			{
 				e.Handled = true;
 			}
+		}
+
+		private void MessageList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			MyItem mi = (MyItem)MessageList.SelectedItem;
+			MsgBox.Text = mi.Data;
 		}
 	}
 }

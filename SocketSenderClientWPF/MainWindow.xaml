@@ -14,8 +14,8 @@
                 <MenuItem Header="E_xit" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Socket">
-                <MenuItem x:Name="StartMenuItem" Header="S_tart" Click="StartMenuItem_Click"/>
-                <MenuItem x:Name="StopMenuItem" Header="Sto_p" Click="StopMenuItem_Click"/>
+                <MenuItem x:Name="StartMenuItem" Header="_Open" Click="StartMenuItem_Click"/>
+                <MenuItem x:Name="StopMenuItem" Header="_Close" Click="StopMenuItem_Click"/>
             </MenuItem>
             <MenuItem Header="_Data">
                 <MenuItem Header="_Load..." Click="LoadData_Click"/>
@@ -52,36 +52,34 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Content="Server IP"/>
-                    <TextBox x:Name="ServerIpBox" Grid.Column="1" Text="TextBox" PreviewKeyDown="ServerIpBox_PreviewKeyDown" DataObject.Pasting="Input_PastingHandler" TextChanged="Input_TextChanged"/>
+                    <TextBox x:Name="ServerIpBox" Grid.Column="1" Text="TextBox" PreviewKeyDown="ServerIpBox_PreviewKeyDown" DataObject.Pasting="Input_PastingHandler" TextChanged="Input_TextChanged" VerticalContentAlignment="Center"/>
                     <Label Grid.Column="2" Content="Port No."/>
-                    <TextBox x:Name="PortNoBox" Grid.Column="3" Text="TextBox" PreviewKeyDown="PortNoBox_PreviewKeyDown" DataObject.Pasting="Input_PastingHandler" TextChanged="Input_TextChanged"/>
+                    <TextBox x:Name="PortNoBox" Grid.Column="3" Text="TextBox" PreviewKeyDown="PortNoBox_PreviewKeyDown" DataObject.Pasting="Input_PastingHandler" TextChanged="Input_TextChanged" VerticalContentAlignment="Center"/>
                 </Grid>
 
                 <ListView x:Name="OutputLog" Grid.Row="1"/>
 
                 <DockPanel Grid.Row="2">
                     <Button x:Name="SendMsgButton" Content="Send" Click="SendMsgButton_Click"/>
-                    <TextBox x:Name="MsgBox" Text="TextBox" ToolTip="Hex input (e.g. DEADBEEF01)" TextChanged="MsgBox_TextChanged" DataObject.Pasting="Input_PastingHandler" PreviewKeyDown="MsgBox_PreviewKeyDown" />
+                    <TextBox x:Name="MsgBox" Text="TextBox" ToolTip="Hex input (e.g. DEADBEEF01)" TextChanged="MsgBox_TextChanged" DataObject.Pasting="Input_PastingHandler" PreviewKeyDown="MsgBox_PreviewKeyDown" VerticalContentAlignment="Center"/>
                 </DockPanel>
 
             </Grid>
 
-            <ListView x:Name="MessageList" Grid.Column="1">
+            <ListView x:Name="MessageList" Grid.Column="1" MouseDoubleClick="MessageList_MouseDoubleClick" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}"/>
                         <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Data}"/>
                     </GridView>
                 </ListView.View>
-                <ListViewItem Content="x"/>
-                <ListViewItem Content="y"/>
             </ListView>
             
             <GridSplitter Width="5"/>
         </Grid>
 
         <StatusBar Grid.Row="2">
-            <StatusBarItem Content="Wibble"/>
+            <StatusBarItem x:Name="StatusBar" Content=""/>
         </StatusBar>
 
     </Grid>

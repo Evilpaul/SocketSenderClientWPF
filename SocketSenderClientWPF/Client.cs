@@ -20,6 +20,7 @@ namespace SocketSenderClientWPF
 
 		public void openSocket(IPAddress ip, int port)
 		{
+			progress_str.Report("Opening Socket...");
 			sender = new UdpClient(ip.ToString(), port);
 			sender.BeginReceive(DataReceived, sender);
 
@@ -38,13 +39,14 @@ namespace SocketSenderClientWPF
 				if (sender != null)
 				{
 					byte[] byData = StringToByteArray(msg);
-					progress_str.Report(BitConverter.ToString(byData).Replace("-", string.Empty));
+					progress_str.Report("Sending Msg : " + BitConverter.ToString(byData).Replace("-", string.Empty));
 					sender.Send(byData, byData.Length);
 				}
 			}
 			catch (SocketException se)
 			{
 				progress_str.Report(se.Message);
+				closeSocket();
 			}
 		}
 
@@ -52,6 +54,7 @@ namespace SocketSenderClientWPF
 		{
 			if (sender != null)
 			{
+				progress_str.Report("Closing Socket...");
 				sender.Close();
 				sender = null;
 			}
@@ -83,11 +86,13 @@ namespace SocketSenderClientWPF
 			catch (ObjectDisposedException)
 			{
 				progress_str.Report("DataReceived: Socket has been closed");
+				closeSocket();
 				progress_hmi.Report(false);
 			}
 			catch (SocketException se)
 			{
 				progress_str.Report(se.Message);
+				closeSocket();
 				progress_hmi.Report(false);
 			}
 		}
