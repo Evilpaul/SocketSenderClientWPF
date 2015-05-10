@@ -128,7 +128,8 @@ namespace SocketSenderClientWPF
 
 		private void UpdateSendBtnStatus()
 		{
-			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && client  != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning();
+			Match matchIp = Regex.Match(MsgBox.Text, @"([a-fA-F0-9][a-fA-F0-9])+");
+			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && matchIp.Success && client != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning();
 		}
 
 		private IPAddress parseIpAddr()
