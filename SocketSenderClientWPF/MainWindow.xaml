@@ -61,7 +61,7 @@
 
                 <DockPanel Grid.Row="2">
                     <Button x:Name="SendMsgButton" Content="Send" Click="SendMsgButton_Click"/>
-                    <TextBox x:Name="MsgBox" Text="TextBox" ToolTip="Hex input (e.g. DEADBEEF01)" TextChanged="MsgBox_TextChanged" DataObject.Pasting="Input_PastingHandler" PreviewKeyDown="MsgBox_PreviewKeyDown" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="MsgBox" ToolTip="Hex input (e.g. DEADBEEF01)" TextChanged="MsgBox_TextChanged" DataObject.Pasting="Input_PastingHandler" PreviewKeyDown="MsgBox_PreviewKeyDown" VerticalContentAlignment="Center"/>
                 </DockPanel>
 
             </Grid>
