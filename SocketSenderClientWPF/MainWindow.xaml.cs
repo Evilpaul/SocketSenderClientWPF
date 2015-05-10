@@ -17,7 +17,6 @@ namespace SocketSenderClientWPF
 	{
 		private IProgress<string> progress_str;
 		private IProgress<Boolean> progress_hmi;
-		private IProgress<Boolean> progress_seq;
 
 		private Client client;
 		private Sequence sequence;
@@ -40,27 +39,6 @@ namespace SocketSenderClientWPF
 
 			progress_hmi = new Progress<Boolean>(status =>
 			{
-				ServerIpBox.IsEnabled = !status;
-				PortNoBox.IsEnabled = !status;
-				RunMenuItem.IsEnabled = status && sequence.IsLoaded();
-				if (!status)
-				{
-					UpdateOpenBtnStatus();
-					SendMsgButton.IsEnabled = status;
-				}
-				else
-				{
-					UpdateSendBtnStatus();
-					StartMenuItem.IsEnabled = !status;
-				}
-				StopMenuItem.IsEnabled = status;
-
-				MsgBox.IsEnabled = status;
-				MessageList.IsEnabled = status;
-			});
-
-			progress_seq = new Progress<Boolean>(status =>
-			{
 				updateUI();
 			});
 
@@ -68,10 +46,9 @@ namespace SocketSenderClientWPF
 			PortNoBox.Text = "5050";
 
 			progress_hmi.Report(false);
-			progress_seq.Report(false);
 
 			client = new Client(progress_str, progress_hmi);
-			sequence = new Sequence(progress_str, progress_seq, ref client);
+			sequence = new Sequence(progress_str, progress_hmi, ref client);
 			data = new Data(progress_str, ref MessageList);
 
 			data.LoadDefaults();
@@ -79,14 +56,32 @@ namespace SocketSenderClientWPF
 
 		private void updateUI()
 		{
-			if(sequence.IsRunning())
+			if (client.isSocketOpen())
 			{
-				StatusBar.Content = "Sequence running";
+				StatusBar.Content = "Socket open";
 			}
 			else
 			{
-				StatusBar.Content = "";
+				StatusBar.Content = "Socket closed";
 			}
+
+			if(sequence.IsRunning())
+			{
+				StatusBar.Content += ", Sequence running";
+			}
+			else if (sequence.IsLoaded())
+			{
+				StatusBar.Content += ", Sequence loaded";
+			}
+
+			ServerIpBox.IsEnabled = !client.isSocketOpen();
+			PortNoBox.IsEnabled = !client.isSocketOpen();
+			RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded() && !sequence.IsRunning();
+			StopMenuItem.IsEnabled = client.isSocketOpen();
+			MsgBox.IsEnabled = client.isSocketOpen() && !sequence.IsRunning();
+			MessageList.IsEnabled = client.isSocketOpen();
+			UpdateOpenBtnStatus();
+			UpdateSendBtnStatus();
 		}
 
 		private string GetIP()
@@ -116,13 +111,13 @@ namespace SocketSenderClientWPF
 				Match matchIp = Regex.Match(ServerIpBox.Text, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
 				Match matchPort = Regex.Match(PortNoBox.Text, @"\d");
 
-				if (!matchIp.Success || !matchPort.Success)
+				if (matchIp.Success && matchPort.Success && client != null && !client.isSocketOpen())
 				{
-					StartMenuItem.IsEnabled = false;
+					StartMenuItem.IsEnabled = true;
 				}
 				else
 				{
-					StartMenuItem.IsEnabled = true;
+					StartMenuItem.IsEnabled = false;
 				}
 			}
 			else
@@ -133,14 +128,7 @@ namespace SocketSenderClientWPF
 
 		private void UpdateSendBtnStatus()
 		{
-			if (String.IsNullOrEmpty(MsgBox.Text))
-			{
-				SendMsgButton.IsEnabled = false;
-			}
-			else
-			{
-				SendMsgButton.IsEnabled = true;
-			}
+			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && client  != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning();
 		}
 
 		private IPAddress parseIpAddr()

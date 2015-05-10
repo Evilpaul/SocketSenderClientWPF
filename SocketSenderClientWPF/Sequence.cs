@@ -12,17 +12,17 @@ namespace SocketSenderClientWPF
 	class Sequence
 	{
 		private IProgress<string> progress_str;
-		private IProgress<bool> progress_seq;
+		private IProgress<bool> progress_hmi;
 		private Client client;
 		private bool isRunning;
 		private bool isLoaded;
 
 		private List<node> list = new List<node>();
 
-		public Sequence(IProgress<string> pr_str, IProgress<bool> pr_seq, ref Client cl)
+		public Sequence(IProgress<string> pr_str, IProgress<bool> pr_hmi, ref Client cl)
 		{
 			progress_str = pr_str;
-			progress_seq = pr_seq;
+			progress_hmi = pr_hmi;
 			client = cl;
 			isLoaded = false;
 			isRunning = false;
@@ -36,12 +36,18 @@ namespace SocketSenderClientWPF
 		private void Set_IsRunning(bool value)
 		{
 			isRunning = value;
-			progress_seq.Report(isRunning);
+			progress_hmi.Report(isRunning);
 		}
 
 		public bool IsLoaded()
 		{
 			return isLoaded;
+		}
+
+		private void Set_IsLoaded(bool value)
+		{
+			isLoaded = value;
+			progress_hmi.Report(isLoaded);
 		}
 
 		public async void Run()
@@ -124,13 +130,13 @@ namespace SocketSenderClientWPF
 				} while (reader.Read());
 
 				reader.Close();
-				isLoaded = true;
+				Set_IsLoaded(true);
 
 				progress_str.Report("File loaded : " + filePath);
 			}
 			catch (XmlSchemaValidationException ex)
 			{
-				isLoaded = false;
+				Set_IsLoaded(false);
 				progress_str.Report("Validation error: " + ex.Message);
 			}
 		}
