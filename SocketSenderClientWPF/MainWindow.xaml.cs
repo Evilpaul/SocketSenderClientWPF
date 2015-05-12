@@ -78,8 +78,6 @@ namespace SocketSenderClientWPF
 			PortNoBox.IsEnabled = !client.isSocketOpen();
 			RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded() && !sequence.IsRunning();
 			StopMenuItem.IsEnabled = client.isSocketOpen();
-			MsgBox.IsEnabled = client.isSocketOpen() && !sequence.IsRunning();
-			MessageList.IsEnabled = client.isSocketOpen();
 			UpdateOpenBtnStatus();
 			UpdateSendBtnStatus();
 		}
