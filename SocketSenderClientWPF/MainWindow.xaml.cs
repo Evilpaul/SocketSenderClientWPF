@@ -65,18 +65,18 @@ namespace SocketSenderClientWPF
 				StatusBar.Content = "Socket closed";
 			}
 
-			if(sequence.IsRunning())
+			if(sequence.IsRunning)
 			{
 				StatusBar.Content += ", Sequence running";
 			}
-			else if (sequence.IsLoaded())
+			else if (sequence.IsLoaded)
 			{
 				StatusBar.Content += ", Sequence loaded";
 			}
 
 			ServerIpBox.IsEnabled = !client.isSocketOpen();
 			PortNoBox.IsEnabled = !client.isSocketOpen();
-			RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded() && !sequence.IsRunning();
+			RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded && !sequence.IsRunning;
 			StopMenuItem.IsEnabled = client.isSocketOpen();
 			UpdateOpenBtnStatus();
 			UpdateSendBtnStatus();
@@ -127,7 +127,7 @@ namespace SocketSenderClientWPF
 		private void UpdateSendBtnStatus()
 		{
 			Match matchIp = Regex.Match(MsgBox.Text, @"([a-fA-F0-9][a-fA-F0-9])+");
-			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && matchIp.Success && client != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning();
+			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && matchIp.Success && client != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning;
 		}
 
 		private IPAddress parseIpAddr()
@@ -230,7 +230,7 @@ namespace SocketSenderClientWPF
 			if (openDialog.ShowDialog().Value) // Test result.
 			{
 				sequence.Load(openDialog.FileName);
-				RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded();
+				RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded;
 			}
 		}
 

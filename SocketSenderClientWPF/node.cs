@@ -14,41 +14,22 @@ namespace SocketSenderClientWPF
 			Delay
 		}
 
-		private NodeType nodeType;
-		public int delay_val;
-		public string msg_val;
+		public NodeType nodeType { get; private set; }
+		public int Delay { get; private set; }
+		public string Message { get; private set; }
 
 		public node(int delay)
 		{
 			nodeType = NodeType.Delay;
-			delay_val = delay;
+			Delay = delay;
+			Message = "";
 		}
 
 		public node(string value)
 		{
 			nodeType = NodeType.Message;
-			msg_val = value;
-		}
-
-		public NodeType getType()
-		{
-			return nodeType;
-		}
-
-		public int getDelay()
-		{
-			if (nodeType == NodeType.Delay)
-				return delay_val;
-			else
-				throw new InvalidOperationException("This node has no delay value");
-		}
-
-		public string getValue()
-		{
-			if (nodeType == NodeType.Message)
-				return msg_val;
-			else
-				throw new InvalidOperationException("This node has no message value");
+			Message = value;
+			Delay = 0;
 		}
 	}
 }

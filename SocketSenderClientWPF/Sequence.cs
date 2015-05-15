@@ -14,8 +14,10 @@ namespace SocketSenderClientWPF
 		private IProgress<string> progress_str;
 		private IProgress<bool> progress_hmi;
 		private Client client;
-		private bool isRunning;
-		private bool isLoaded;
+		private bool _isRunning;
+		private bool _isLoaded;
+		public bool IsRunning { get { return _isRunning; } private set { _isRunning = value; progress_hmi.Report(value); } }
+		public bool IsLoaded { get { return _isLoaded; } private set { _isLoaded = value; progress_hmi.Report(value); } }
 
 		private List<node> list = new List<node>();
 
@@ -24,30 +26,8 @@ namespace SocketSenderClientWPF
 			progress_str = pr_str;
 			progress_hmi = pr_hmi;
 			client = cl;
-			isLoaded = false;
-			isRunning = false;
-		}
-
-		public bool IsRunning()
-		{
-			return isRunning;
-		}
-
-		private void Set_IsRunning(bool value)
-		{
-			isRunning = value;
-			progress_hmi.Report(isRunning);
-		}
-
-		public bool IsLoaded()
-		{
-			return isLoaded;
-		}
-
-		private void Set_IsLoaded(bool value)
-		{
-			isLoaded = value;
-			progress_hmi.Report(isLoaded);
+			_isLoaded = false;
+			_isRunning = false;
 		}
 
 		public async void Run()
@@ -59,31 +39,31 @@ namespace SocketSenderClientWPF
 		{
 			return Task.Run(() =>
 			{
-				if (!isLoaded)
+				if (!IsLoaded)
 				{
 					progress_str.Report("ERROR: No sequence loaded!");
 					return;
 				}
 
-				Set_IsRunning(true);
+				IsRunning = true;
 
 				foreach (node n in list)
 				{
 					if (!client.isSocketOpen())
 						break;
 
-					if (n.getType() == node.NodeType.Delay)
+					if (n.nodeType == node.NodeType.Delay)
 					{
-						progress_str.Report("Sleeping for " + n.getDelay() + " milliseconds");
-						Thread.Sleep(n.getDelay());
+						progress_str.Report("Sleeping for " + n.Delay + " milliseconds");
+						Thread.Sleep(n.Delay);
 					}
 					else
 					{
-						client.sendMessage(n.getValue());
+						client.sendMessage(n.Message);
 					}
 				}
 
-				Set_IsRunning(false);
+				IsRunning = false;
 			});
 		}
 
@@ -130,13 +110,13 @@ namespace SocketSenderClientWPF
 				} while (reader.Read());
 
 				reader.Close();
-				Set_IsLoaded(true);
+				IsLoaded = true;
 
 				progress_str.Report("File loaded : " + filePath);
 			}
 			catch (XmlSchemaValidationException ex)
 			{
-				Set_IsLoaded(false);
+				IsLoaded = false;
 				progress_str.Report("Validation error: " + ex.Message);
 			}
 		}
