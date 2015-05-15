@@ -293,7 +293,10 @@ namespace SocketSenderClientWPF
 		private void MessageList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			MyItem mi = (MyItem)MessageList.SelectedItem;
-			MsgBox.Text = mi.Data;
+			if (mi != null)
+			{
+				MsgBox.Text = mi.Data;
+			}
 		}
 	}
 }
