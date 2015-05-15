@@ -90,6 +90,10 @@ namespace SocketSenderClientWPF
 			{
 				progress_str.Report("Validation error: " + ex.Message);
 			}
+			catch (XmlException ex)
+			{
+				progress_str.Report("XML error: " + ex.Message);
+			}
 		}
 	}
 }
