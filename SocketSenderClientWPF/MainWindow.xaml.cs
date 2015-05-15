@@ -56,7 +56,7 @@ namespace SocketSenderClientWPF
 
 		private void updateUI()
 		{
-			if (client.isSocketOpen())
+			if (client.IsOpen)
 			{
 				StatusBar.Content = "Socket open";
 			}
@@ -74,10 +74,10 @@ namespace SocketSenderClientWPF
 				StatusBar.Content += ", Sequence loaded";
 			}
 
-			ServerIpBox.IsEnabled = !client.isSocketOpen();
-			PortNoBox.IsEnabled = !client.isSocketOpen();
-			RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded && !sequence.IsRunning;
-			StopMenuItem.IsEnabled = client.isSocketOpen();
+			ServerIpBox.IsEnabled = !client.IsOpen;
+			PortNoBox.IsEnabled = !client.IsOpen;
+			RunMenuItem.IsEnabled = client.IsOpen && sequence.IsLoaded && !sequence.IsRunning;
+			StopMenuItem.IsEnabled = client.IsOpen;
 			UpdateOpenBtnStatus();
 			UpdateSendBtnStatus();
 		}
@@ -109,7 +109,7 @@ namespace SocketSenderClientWPF
 				Match matchIp = Regex.Match(ServerIpBox.Text, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
 				Match matchPort = Regex.Match(PortNoBox.Text, @"\d");
 
-				if (matchIp.Success && matchPort.Success && client != null && !client.isSocketOpen())
+				if (matchIp.Success && matchPort.Success && client != null && !client.IsOpen)
 				{
 					StartMenuItem.IsEnabled = true;
 				}
@@ -127,7 +127,7 @@ namespace SocketSenderClientWPF
 		private void UpdateSendBtnStatus()
 		{
 			Match matchIp = Regex.Match(MsgBox.Text, @"([a-fA-F0-9][a-fA-F0-9])+");
-			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && matchIp.Success && client != null && client.isSocketOpen() && sequence != null && !sequence.IsRunning;
+			SendMsgButton.IsEnabled = !String.IsNullOrEmpty(MsgBox.Text) && matchIp.Success && client != null && client.IsOpen && sequence != null && !sequence.IsRunning;
 		}
 
 		private IPAddress parseIpAddr()
@@ -230,7 +230,7 @@ namespace SocketSenderClientWPF
 			if (openDialog.ShowDialog().Value) // Test result.
 			{
 				sequence.Load(openDialog.FileName);
-				RunMenuItem.IsEnabled = client.isSocketOpen() && sequence.IsLoaded;
+				RunMenuItem.IsEnabled = client.IsOpen && sequence.IsLoaded;
 			}
 		}
 

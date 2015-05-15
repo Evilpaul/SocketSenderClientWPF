@@ -49,7 +49,7 @@ namespace SocketSenderClientWPF
 
 				foreach (node n in list)
 				{
-					if (!client.isSocketOpen())
+					if (!client.IsOpen)
 						break;
 
 					if (n.nodeType == node.NodeType.Delay)

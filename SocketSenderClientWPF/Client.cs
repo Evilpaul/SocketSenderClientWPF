@@ -12,6 +12,8 @@ namespace SocketSenderClientWPF
 
 		private UdpClient sender;
 
+		public bool IsOpen { get { return (sender != null); } }
+
 		public Client(IProgress<string> pr_str, IProgress<Boolean> pr_hmi)
 		{
 			progress_str = pr_str;
@@ -25,11 +27,6 @@ namespace SocketSenderClientWPF
 			sender.BeginReceive(DataReceived, sender);
 
 			progress_hmi.Report(true);
-		}
-
-		public bool isSocketOpen()
-		{
-			return (sender != null);
 		}
 
 		public void sendMessage(string msg)
