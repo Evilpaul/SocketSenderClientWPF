@@ -119,6 +119,11 @@ namespace SocketSenderClientWPF
 				IsLoaded = false;
 				progress_str.Report("Validation error: " + ex.Message);
 			}
+			catch (XmlException ex)
+			{
+				IsLoaded = false;
+				progress_str.Report("XML error: " + ex.Message);
+			}
 		}
 	}
 }
