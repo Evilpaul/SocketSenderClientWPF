@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -22,6 +23,8 @@ namespace SocketSenderClientWPF
 		private Sequence sequence;
 		private Data data;
 
+		private Mutex mut;
+
 		private IReadOnlyList<Key> allowedPortKeys = new List<Key> { Key.D0, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.Back, Key.Delete, Key.Left, Key.Up, Key.Down, Key.Right };
 		private IReadOnlyList<Key> allowedIpKeys = new List<Key> { Key.D0, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.Back, Key.Delete, Key.Left, Key.Up, Key.Down, Key.Right, Key.OemPeriod };
 		private IReadOnlyList<Key> allowedHexKeys = new List<Key> { Key.D0, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9, Key.A, Key.B, Key.C, Key.D, Key.E, Key.F, Key.Back, Key.Delete, Key.Left, Key.Up, Key.Down, Key.Right };
@@ -30,11 +33,15 @@ namespace SocketSenderClientWPF
 		{
 			InitializeComponent();
 
+			mut = new Mutex();
+
 			progress_str = new Progress<string>(status =>
 			{
+				mut.WaitOne();
 				OutputLog.Items.Add(status);
 				OutputLog.UpdateLayout();
 				OutputLog.ScrollIntoView(OutputLog.Items[OutputLog.Items.Count - 1]);
+				mut.ReleaseMutex();
 			});
 
 			progress_hmi = new Progress<Boolean>(status =>
