@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace SocketSenderClientWPF
 {
@@ -12,12 +13,15 @@ namespace SocketSenderClientWPF
 
 		private UdpClient sender;
 
+		private Mutex mut;
+
 		public bool IsOpen { get { return (sender != null); } }
 
 		public Client(IProgress<string> pr_str, IProgress<Boolean> pr_hmi)
 		{
 			progress_str = pr_str;
 			progress_hmi = pr_hmi;
+			mut = new Mutex();
 		}
 
 		public void openSocket(IPAddress ip, int port)
@@ -31,6 +35,7 @@ namespace SocketSenderClientWPF
 
 		public void sendMessage(string msg)
 		{
+			mut.WaitOne();
 			try
 			{
 				if (sender != null)
@@ -45,6 +50,7 @@ namespace SocketSenderClientWPF
 				progress_str.Report(se.Message);
 				closeSocket();
 			}
+			mut.ReleaseMutex();
 		}
 
 		public void closeSocket()
